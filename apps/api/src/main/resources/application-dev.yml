@@ -7,7 +7,7 @@ spring:
   jpa:
     enabled: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       format_sql: true
 
 
@@ -15,6 +15,4 @@ spring:
     url: jdbc:postgresql://db:5432/mydb
     username: user
     password: password
-
-
-
+    

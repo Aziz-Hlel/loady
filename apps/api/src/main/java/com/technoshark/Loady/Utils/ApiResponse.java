@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -25,9 +23,9 @@ public class ApiResponse<T> {
 
     @Builder.Default
     protected LocalDateTime timestamp = LocalDateTime.now();
-    
+
     protected String path;
-    protected HttpStatus status;
+    protected int status;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY) // Forgetting null safety: Not using @JsonInclude properly, sending
                                                 // unnecessary null fields

@@ -49,7 +49,7 @@ public class UserController {
                                                 .success(true)
                                                 .message("User created successfully")
                                                 .data(userResponse)
-                                                .status(HttpStatus.CREATED)
+                                                .status(HttpStatus.CREATED.value())
                                                 .build());
 
         }
@@ -68,7 +68,7 @@ public class UserController {
                                                 .success(true)
                                                 .message("User logged in successfully")
                                                 .data(userResponse)
-                                                .status(HttpStatus.OK)
+                                                .status(HttpStatus.OK.value())
                                                 .build());
 
         }
@@ -86,7 +86,7 @@ public class UserController {
                                                 .success(true)
                                                 .message("User authenticated successfully with external provider")
                                                 .data(userResponse)
-                                                .status(HttpStatus.OK)
+                                                .status(HttpStatus.OK.value())
                                                 .build());
         }
 
@@ -106,7 +106,7 @@ public class UserController {
                                                 .success(true)
                                                 .message("Current user fetched successfully")
                                                 .data(userResponse)
-                                                .status(HttpStatus.OK)
+                                                .status(HttpStatus.OK.value())
                                                 .build());
         }
 
@@ -121,7 +121,7 @@ public class UserController {
                                                 .success(true)
                                                 .message("All users deleted successfully from Firebase Auth")
                                                 .data("All users deleted")
-                                                .status(HttpStatus.OK)
+                                                .status(HttpStatus.OK.value())
                                                 .build());
         }
 

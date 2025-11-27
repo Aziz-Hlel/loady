@@ -31,9 +31,9 @@ spring:
     restart:
       enabled: true
 
-server:
-  servlet:
-    context-path: /api # This automatically prefixes every controller path with /api
+# server:
+#   servlet:
+#     context-path: /api # This automatically prefixes every controller path with /api
   
 
 app: # like .env retreived in AppProperties           
