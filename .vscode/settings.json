@@ -1,0 +1,38 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": null,
+    // * Change makefiles Folder icon with "Material Icon Theme" Extension
+    "material-icon-theme.folders.associations": {
+        "makefiles": "rules"
+    },
+    "java.compile.nullAnalysis.mode": "automatic",
+    // * Enable prettier for js & tsx
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // * Enable prettier for sql
+    "[sql]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[plsql]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // * Enable prettier for json and other config
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+    },
+    "java.configuration.updateBuildConfiguration": "interactive",
+}

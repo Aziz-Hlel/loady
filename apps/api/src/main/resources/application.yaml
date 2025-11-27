@@ -1,0 +1,40 @@
+spring:
+
+  application:
+    name: Loady
+
+
+
+  datasource:
+    url: jdbc:postgresql://db:5432/mydb
+    username: user
+    password: password
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      format_sql: true
+
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect #This tells Hibernate (the ORM used by Spring Data JPA) how to generate SQL statements that are optimized for PostgreSQL.
+        # jdbc:
+        #   batch_size: 50 # Enable batching
+        # order_inserts: true # All entities must be in the same state (insert vs update)
+        # order_updates: true # Hibernate groups by DML type. Mixing inserts and updates may reduce batching efficiency.
+
+  devtools:
+    livereload:
+      enabled: true # Spring Boot enables LiveReload by default when DevTools is present, but it's good practice to be explicit in your dev config.
+    restart:
+      enabled: true
+
+server:
+  servlet:
+    context-path: /api # This automatically prefixes every controller path with /api
+  
+
+app: # like .env retreived in AppProperties           
+  firebaseServiceAccount: ${FIREBASE_SERVICE_ACCOUNT:}

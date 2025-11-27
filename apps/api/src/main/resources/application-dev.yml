@@ -1,0 +1,20 @@
+app: # like .env retreived in AppProperties           
+  firebaseServiceAccount: ${FIREBASE_SERVICE_ACCOUNT:}
+
+spring:
+
+
+  jpa:
+    enabled: true
+    hibernate:
+      ddl-auto: create-drop
+      format_sql: true
+
+
+  datasource:
+    url: jdbc:postgresql://db:5432/mydb
+    username: user
+    password: password
+
+
+

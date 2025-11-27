@@ -1,0 +1,31 @@
+FROM eclipse-temurin:21-jdk AS development
+
+WORKDIR /app
+
+# Optional shared folder
+COPY ./shared/ ./shared/
+
+ARG APP_PATH=apps/api
+
+WORKDIR /app/${APP_PATH}
+
+# Copy Maven Wrapper (required)
+COPY ./${APP_PATH}/mvnw ./
+COPY ./${APP_PATH}/.mvn ./.mvn
+
+# Ensure wrapper is executable
+RUN chmod +x mvnw
+
+# Copy only pom.xml first for dependency layer caching
+COPY ./${APP_PATH}/pom.xml ./
+
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B
+
+# Now copy the full source
+COPY ./${APP_PATH}/src ./src
+
+# Run in dev mode
+CMD ["./mvnw", "spring-boot:run", \
+     "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", \
+     "-Dspring.devtools.restart.enabled=true"]

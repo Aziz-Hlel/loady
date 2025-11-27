@@ -1,0 +1,31 @@
+{
+  "name": "loady",
+  "version": "1.0.0",
+  "scripts": {
+    "preinstall": "node ./scripts/check-package-manager.js",
+    "prepare": "husky",
+
+    "format:fix": "prettier --write .",
+    "dev": "node scripts/docker-up.js dev",
+
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown"
+  },
+  "keywords": [],
+  "author": "Tigana",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "prettier-plugin-sql": "^0.19.2"
+  }
+}
