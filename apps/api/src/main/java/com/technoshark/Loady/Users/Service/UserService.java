@@ -52,7 +52,7 @@ public class UserService {
 
         firebaseService.setCustomClaims(userId.toString(), savedUser.getRole(), null);
 
-        UserResponse userResponse = userMapper.toDto(savedUser);
+        UserResponse userResponse = userMapper.toDto(savedUser, firebaseToken);
         return userResponse;
     }
 
@@ -68,7 +68,7 @@ public class UserService {
             // TODO : set other claims like schoolId
             firebaseService.setCustomClaims(user.getId(), user.getRole(), null);
         }
-        UserResponse userResponse = userMapper.toDto(user);
+        UserResponse userResponse = userMapper.toDto(user, firebaseToken);
         return userResponse;
     }
 
@@ -88,7 +88,7 @@ public class UserService {
 
         User savedUser = usersRepo.save(userEntity);
 
-        UserResponse userResponse = userMapper.toDto(savedUser);
+        UserResponse userResponse = userMapper.toDto(savedUser, firebaseToken);
         return userResponse;
     }
 
@@ -118,7 +118,7 @@ public class UserService {
             firebaseService.setCustomClaims(user.get().getId(), user.get().getRole(), null);
         }
 
-        UserResponse userResponse = userMapper.toDto(user.get());
+        UserResponse userResponse = userMapper.toDto(user.get(), firebaseToken);
 
         return userResponse;
     }
@@ -129,7 +129,7 @@ public class UserService {
         User user = usersRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id not found."));
 
-        UserResponse userResponse = userMapper.toDto(user);
+        UserResponse userResponse = userMapper.toDto(user, firebaseToken);
         return userResponse;
     }
 

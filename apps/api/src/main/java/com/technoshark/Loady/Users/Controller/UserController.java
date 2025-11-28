@@ -46,7 +46,6 @@ public class UserController {
 
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(ApiResponse.<UserResponse>builder()
-                                                .success(true)
                                                 .message("User created successfully")
                                                 .data(userResponse)
                                                 .status(HttpStatus.CREATED.value())
@@ -65,7 +64,6 @@ public class UserController {
 
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(ApiResponse.<UserResponse>builder()
-                                                .success(true)
                                                 .message("User logged in successfully")
                                                 .data(userResponse)
                                                 .status(HttpStatus.OK.value())
@@ -83,7 +81,6 @@ public class UserController {
                 UserResponse userResponse = usersService.authenticateWithProvider(firebaseToken);
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(ApiResponse.<UserResponse>builder()
-                                                .success(true)
                                                 .message("User authenticated successfully with external provider")
                                                 .data(userResponse)
                                                 .status(HttpStatus.OK.value())
@@ -103,7 +100,6 @@ public class UserController {
 
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(ApiResponse.<UserResponse>builder()
-                                                .success(true)
                                                 .message("Current user fetched successfully")
                                                 .data(userResponse)
                                                 .status(HttpStatus.OK.value())
@@ -118,7 +114,6 @@ public class UserController {
 
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(ApiResponse.<String>builder()
-                                                .success(true)
                                                 .message("All users deleted successfully from Firebase Auth")
                                                 .data("All users deleted")
                                                 .status(HttpStatus.OK.value())

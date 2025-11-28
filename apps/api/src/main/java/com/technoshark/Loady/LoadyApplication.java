@@ -31,7 +31,6 @@ public class LoadyApplication {
 	public ResponseEntity<ApiResponse<String>> healthCheck() {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(ApiResponse.<String>builder()
-						.success(true)
 						.message("API is healthy")
 						.data("OK")
 						.status(200)

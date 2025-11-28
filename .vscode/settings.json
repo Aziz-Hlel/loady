@@ -34,5 +34,19 @@
         },
         "editor.suggest.insertMode": "replace"
     },
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.compile.nullAnalysis.nonnull": [
+        "javax.annotation.Nonnull",
+        "org.eclipse.jdt.annotation.NonNull",
+        "org.jetbrains.annotations.NotNull",
+        "org.springframework.lang.NonNull",
+        "org.jspecify.annotations.NonNull"
+    ],
+    "java.compile.nullAnalysis.nonnullbydefault": [
+        "javax.annotation.ParametersAreNonnullByDefault",
+        "org.eclipse.jdt.annotation.NonNullByDefault",
+        "org.jetbrains.annotations.NotNull",
+        "org.springframework.lang.NonNullApi",
+        "org.jspecify.annotations.NullMarked"
+    ],
+
 }

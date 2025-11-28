@@ -1,28 +1,29 @@
 package com.technoshark.Loady.ErrorHandler;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {
+    protected final boolean success = false;
 
-    private String message;
-    private String path;
-    private String method;
-    private int status;
-    private LocalDateTime timestamp;
+    // @Nonnull
+    protected String message;
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, String> errors;
+    protected final LocalDateTime timestamp = LocalDateTime.now();
+
+    // @Nonnull
+    protected String path;
+
+    protected int status;
 
 }

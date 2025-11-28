@@ -1,6 +1,5 @@
 package com.technoshark.Loady.ErrorHandler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class GlobalExceptionHandler {
                         ForbiddenAccessException ex,
                         HttpServletRequest request) {
                 return buildErrorResponse(
-                                ex.getMessage(),
+                                ex.getMessage() != null ? ex.getMessage() : "Access is forbidden",
                                 null, // no field-level errors
                                 HttpStatus.FORBIDDEN,
                                 request);
@@ -106,10 +105,8 @@ public class GlobalExceptionHandler {
                 ErrorResponse response = ErrorResponse.builder()
                                 .message(message)
                                 .path(request.getRequestURI())
-                                .method(request.getMethod())
                                 .status(status.value())
-                                .timestamp(LocalDateTime.now())
-                                .errors(errors).build();
+                                .build();
 
                 return ResponseEntity.status(status).body(response);
         }

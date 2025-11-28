@@ -6,7 +6,7 @@
     "prepare": "husky",
     "format:fix": "prettier --write .",
     "dev": "node scripts/docker-up.js dev",
-    "generate:api": "node scripts/generate-api.js",
+    "generate:api": "node scripts/generate-openapi.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
