@@ -3,6 +3,7 @@ package com.technoshark.Loady.Users.Model;
 import java.sql.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.Version;
 
 import com.technoshark.Loady.Enums.RoleEnums;
 
@@ -23,9 +24,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class User { 
+public class User {
 
     @Id
+    @Version
     @Column(name = "id", nullable = false, unique = true)
     private String id;
 
@@ -37,7 +39,7 @@ public class User {
 
     @Column(name = "sign_in_provider", nullable = true)
     private String signInProvider;
-
+ 
     // @Column(nullable = false)
     // private String password;
 

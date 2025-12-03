@@ -1,123 +1,45 @@
 package com.technoshark.Loady.Users.Controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.firebase.auth.FirebaseToken;
-import com.technoshark.Loady.Firebase.Service.FirebaseAuthService;
-import com.technoshark.Loady.Interfaces.RequireAuth;
-import com.technoshark.Loady.Users.DTO.LoginWithProviderRequest;
-import com.technoshark.Loady.Users.DTO.UserRequest;
+import com.technoshark.Loady.Enums.RoleEnums;
 import com.technoshark.Loady.Users.DTO.UserResponse;
 import com.technoshark.Loady.Users.Service.UserService;
 import com.technoshark.Loady.Utils.ApiResponse;
+import com.technoshark.Loady.shared.Dto.CustomPage;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/users")
 @AllArgsConstructor
+@Validated
 @Slf4j
-@Validated // this is responsible of validating the PathVariable and RequestParams
 public class UserController {
 
-        private final UserService usersService;
+    private final UserService userService;
 
-        private final FirebaseAuthService firebaseService;
-
-        @PostMapping("/register")
-        public ResponseEntity<ApiResponse<UserResponse>> register(@Valid @RequestBody UserRequest userRequest) {
-
-                log.info("Creating user with idToken: {}", userRequest.getIdToken());
-
-                FirebaseToken firebaseToken = firebaseService.verifyIdToken(userRequest.getIdToken());
-
-                var userResponse = usersService.createUser(firebaseToken);
-
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(ApiResponse.<UserResponse>builder()
-                                                .message("User created successfully")
-                                                .data(userResponse)
-                                                .status(HttpStatus.CREATED.value())
-                                                .build());
-
-        }
-
-        @PostMapping("/login")
-        public ResponseEntity<ApiResponse<UserResponse>> login(@Valid @RequestBody UserRequest userRequest) {
-
-                log.info("Logging in user with idToken: {}", userRequest.getIdToken());
-
-                FirebaseToken firebaseToken = firebaseService.verifyIdToken(userRequest.getIdToken());
-
-                var userResponse = usersService.login(firebaseToken);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                                .body(ApiResponse.<UserResponse>builder()
-                                                .message("User logged in successfully")
-                                                .data(userResponse)
-                                                .status(HttpStatus.OK.value())
-                                                .build());
-
-        }
-
-        @PostMapping("/oauth/login")
-        public ResponseEntity<ApiResponse<UserResponse>> authenticateWithProvider(
-                        @Valid @RequestBody LoginWithProviderRequest loginWithProviderRequest) {
-                log.info("Authenticating user with external provider using idToken: {}",
-                                loginWithProviderRequest.getIdToken());
-                FirebaseToken firebaseToken = firebaseService.verifyIdToken(loginWithProviderRequest.getIdToken());
-
-                UserResponse userResponse = usersService.authenticateWithProvider(firebaseToken);
-                return ResponseEntity.status(HttpStatus.OK)
-                                .body(ApiResponse.<UserResponse>builder()
-                                                .message("User authenticated successfully with external provider")
-                                                .data(userResponse)
-                                                .status(HttpStatus.OK.value())
-                                                .build());
-        }
-
-        @GetMapping("/me")
-        @RequireAuth
-        public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(HttpServletRequest request) {
-                log.info("Fetching current user");
-
-                String idToken = request.getHeader("Authorization").substring(7);
-
-                FirebaseToken firebaseToken = firebaseService.verifyIdToken(idToken);
-
-                var userResponse = usersService.getCurrentUser(firebaseToken);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                                .body(ApiResponse.<UserResponse>builder()
-                                                .message("Current user fetched successfully")
-                                                .data(userResponse)
-                                                .status(HttpStatus.OK.value())
-                                                .build());
-        }
-
-        @GetMapping("/deleteAll")
-        public ResponseEntity<ApiResponse<String>> deleteAllUsers() {
-                log.info("Deleting all users from Firebase Auth");
-
-                firebaseService.deleteAllUsers();
-
-                return ResponseEntity.status(HttpStatus.OK)
-                                .body(ApiResponse.<String>builder()
-                                                .message("All users deleted successfully from Firebase Auth")
-                                                .data("All users deleted")
-                                                .status(HttpStatus.OK.value())
-                                                .build());
-        }
+    @GetMapping({ "", "/" })
+    public ResponseEntity<ApiResponse<CustomPage<UserResponse>>> users(@RequestParam(required = false) String search,
+            @RequestParam(required = false) RoleEnums role,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        var users = userService.searchUsers(search, role, pageable);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.<CustomPage<UserResponse>>builder()
+                        .message("Users fetched successfully")
+                        .data(users)
+                        .status(HttpStatus.OK.value())
+                        .build());
+    }
 
 }

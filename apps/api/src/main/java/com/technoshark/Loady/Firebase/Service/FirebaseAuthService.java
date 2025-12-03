@@ -31,20 +31,37 @@ public class FirebaseAuthService {
         }
     }
 
-    public void setCustomClaims(String userUid, RoleEnums role, String schoolId) {
+    public void setCustomClaims(String userUid, RoleEnums role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role.name());
-        claims.put("schoolId", schoolId);
 
         try {
             firebaseAuth.setCustomUserClaims(userUid, claims);
         } catch (FirebaseAuthException e) {
             throw new ForbiddenAccessException("Failed to set custom claims");
+        }catch(Exception e){
+            throw new InternalError("An unexpected error occurred while setting custom claims");
         }
-    }
+    } 
 
     public UserRecord getUserByUid(String uid) throws FirebaseAuthException {
         return firebaseAuth.getUser(uid);
+    }
+
+    public UserRecord getUserByEmail(String email) {
+        try {
+            return firebaseAuth.getUserByEmail(email);
+        } catch (FirebaseAuthException e) {
+            return null;
+        }
+    }
+
+    public UserRecord createUser(String email, String password) throws FirebaseAuthException {
+        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                .setEmail(email)
+                .setPassword(password);
+
+        return firebaseAuth.createUser(request);
     }
 
     public void deleteAllUsers() {

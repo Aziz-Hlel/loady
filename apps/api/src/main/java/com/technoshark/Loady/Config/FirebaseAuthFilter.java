@@ -2,14 +2,19 @@ package com.technoshark.Loady.Config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
 import jakarta.servlet.FilterChain;
@@ -17,63 +22,97 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Filter that validates Firebase JWT tokens and sets Spring Security
+ * authentication context.
+ * Runs once per request before UsernamePasswordAuthenticationFilter.
+ */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FirebaseAuthFilter extends OncePerRequestFilter {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String CLAIMS_ROLES_KEY = "roles"; // Custom claim key for roles
+
     private final FirebaseAuth firebaseAuth;
-    private final AntPathMatcher matcher = new AntPathMatcher();
-
-    private static final List<String> PUBLIC_ENDPOINTS = List.of(
-            "/auth/**",
-            "/public/**",
-            "/health",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/v3/api-docs**" // * added for api-docs.yaml
-    );
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return PUBLIC_ENDPOINTS.stream().anyMatch(pattern -> matcher.match(pattern, uri));
-    }
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
-            throws ServletException, IOException {
-
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            // Only reject **if the filter is not skipped** — which it is thanks to
-            // shouldNotFilter()
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
-            return;
-        }
-
-        String token = header.substring(7);
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            FirebaseToken decoded = firebaseAuth.verifyIdToken(token);
+            String token = extractTokenFromRequest(request);
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    decoded,
-                    null,
-                    List.of() // TODO: Add roles if needed
-            );
+            if (token != null) {
+                FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
+                setAuthentication(decodedToken, request);
+            }
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-        } catch (Exception ex) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
-            return;
+        } catch (FirebaseAuthException e) {
+            log.warn("Firebase token verification failed: {}", e.getMessage());
+            // Don't throw here - let Spring Security handle unauthorized access
+            // If no authentication is set, secured endpoints will return 403
+        } catch (Exception e) {
+            log.error("Unexpected error during Firebase authentication", e);
         }
 
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extracts JWT token from Authorization header.
+     */
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX.length());
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates Spring Security authentication object and sets it in SecurityContext.
+     */
+    private void setAuthentication(FirebaseToken token, HttpServletRequest request) {
+        // Extract custom roles from Firebase token claims (if present)
+        List<SimpleGrantedAuthority> authorities = extractAuthorities(token);
+
+        // Create authentication object with FirebaseToken as principal
+        var authentication = new UsernamePasswordAuthenticationToken(
+                token,
+                null,
+                authorities);
+
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        log.debug("Authenticated user: {} (UID: {})", token.getEmail(), token.getUid());
+    }
+
+    /**
+     * Extracts user roles from Firebase custom claims.
+     * You can set custom claims in Firebase using Admin SDK:
+     * admin.auth().setCustomUserClaims(uid, { roles: ['USER', 'ADMIN'] })
+     */
+    @SuppressWarnings("unchecked")
+    private List<SimpleGrantedAuthority> extractAuthorities(FirebaseToken token) {
+        Object rolesObject = token.getClaims().get(CLAIMS_ROLES_KEY);
+
+        if (rolesObject instanceof List) {
+            return ((List<String>) rolesObject).stream()
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .collect(Collectors.toList());
+        }
+
+        // Default role for authenticated users
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
 }
