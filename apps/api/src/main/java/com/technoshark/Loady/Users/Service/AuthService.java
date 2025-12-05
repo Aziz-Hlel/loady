@@ -77,6 +77,8 @@ public class AuthService {
         }
 
         UserProfileResponse userResponse = userMapper.toUserProfileDto(user, firebaseToken);
+        System.err.println("user picture from firebase: " + firebaseToken.getPicture());
+        System.err.println("user response : " + userResponse);
         return userResponse;
     }
 
@@ -111,6 +113,8 @@ public class AuthService {
         String userEmail = firebaseToken.getEmail();
         Optional<User> user = usersRepo.findByEmail(userEmail);
         if (user.isEmpty()) {
+            System.err.println("user picture from firebase: " + firebaseToken.getPicture());
+
             return this.addUser(firebaseToken);
         }
 
@@ -127,6 +131,8 @@ public class AuthService {
         }
 
         UserProfileResponse userResponse = userMapper.toUserProfileDto(user.get(), firebaseToken);
+        System.err.println("user picture from firebase: " + firebaseToken.getPicture());
+        System.err.println("user response : " + userResponse);
 
         return userResponse;
     }

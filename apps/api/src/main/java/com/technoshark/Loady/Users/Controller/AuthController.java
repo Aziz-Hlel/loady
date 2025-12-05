@@ -54,7 +54,8 @@ public class AuthController {
         }
 
         @PostMapping("/login")
-        public ResponseEntity<ApiResponse<UserProfileResponse>> loginWithPassword(@Valid @RequestBody UserRequest userRequest) {
+        public ResponseEntity<ApiResponse<UserProfileResponse>> loginWithPassword(
+                        @Valid @RequestBody UserRequest userRequest) {
 
                 log.info("Logging in user with idToken: {}", userRequest.getIdToken());
 
@@ -74,8 +75,7 @@ public class AuthController {
         @PostMapping("/oauth/login")
         public ResponseEntity<ApiResponse<UserProfileResponse>> authenticateWithProvider(
                         @Valid @RequestBody LoginWithProviderRequest loginWithProviderRequest) {
-                log.info("Authenticating user with external provider using idToken: {}",
-                                loginWithProviderRequest.getIdToken());
+
                 FirebaseToken firebaseToken = firebaseService.verifyIdToken(loginWithProviderRequest.getIdToken());
 
                 UserProfileResponse userResponse = usersService.authenticateWithProvider(firebaseToken);

@@ -32,7 +32,8 @@ public class UserController {
     @GetMapping({ "", "/" })
     public ResponseEntity<ApiResponse<CustomPage<UserResponse>>> users(@RequestParam(required = false) String search,
             @RequestParam(required = false) RoleEnums role,
-            @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
         var users = userService.searchUsers(search, role, pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.<CustomPage<UserResponse>>builder()

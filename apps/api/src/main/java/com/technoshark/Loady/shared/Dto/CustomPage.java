@@ -12,6 +12,8 @@ public record CustomPage<T>(List<T> content, CustomPageable pagination) {
                 new CustomPageable(
                         page.getNumber(),
                         page.getSize(),
+                        page.getPageable().getOffset(),
+                        page.getPageable().getPageSize(),
                         page.getTotalElements(),
                         page.getTotalPages()));
     }

@@ -32,8 +32,9 @@ public class UserService {
         Specification<User> spec = UserSpecification.filter(search, role);
 
         Page<UserResponse> users = usersRepo.findAll(spec, pageable)
-                .map(userMapper::toDto);
+                .map(userMapper::toDto); 
 
+        System.err.println("Page offset: " + users.getPageable().getPageSize());
         CustomPage<UserResponse> customPage = CustomPage.from(users);
 
         return customPage;

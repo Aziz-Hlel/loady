@@ -1,6 +1,7 @@
 package com.technoshark.Loady.Users.Model;
 
 import java.sql.Date;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.Version;
@@ -49,11 +50,11 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
+    private Instant createdAt;
 
     @CreationTimestamp
     @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
+    private Instant updatedAt;
 
     // @Override
     // public Collection<? extends GrantedAuthority> getAuthorities() {

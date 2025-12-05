@@ -7,7 +7,7 @@ spring:
   jpa:
     enabled: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       format_sql: true
 
 
